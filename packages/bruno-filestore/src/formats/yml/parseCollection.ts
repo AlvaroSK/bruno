@@ -36,6 +36,10 @@ const parseCollection = (ymlString: string): ParsedCollection => {
       brunoConfig.ignore = brunoExtension.ignore;
     }
 
+    if (brunoExtension?.httpVersion === 2) {
+      brunoConfig.httpVersion = 2;
+    }
+
     if (brunoExtension?.icon && typeof brunoExtension.icon === 'object') {
       const icon = brunoExtension.icon;
       if (icon.source === 'lucide' && typeof icon.name === 'string' && icon.name.length > 0) {

@@ -477,6 +477,10 @@ const prepareRequest = async (item = {}, collection = {}) => {
     return value !== undefined && value !== null && value !== false;
   });
 
+  if (brunoConfig?.httpVersion === 2) {
+    axiosRequest.httpVersion = 2;
+  }
+
   return axiosRequest;
 };
 

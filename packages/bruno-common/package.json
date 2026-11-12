@@ -20,7 +20,8 @@
       "require": "./dist/utils/cjs/index.js",
       "import": "./dist/utils/esm/index.js",
       "types": "./dist/utils/index.d.ts"
-    }
+    },
+    "./http2": "./src/http2.js"
   },
   "files": [
     "dist",

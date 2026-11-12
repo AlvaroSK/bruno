@@ -322,6 +322,14 @@ const stringifyCollection = (collectionRoot: any, brunoConfig: any): string => {
       (oc.extensions.bruno as any).scripts = brunoScripts;
     }
 
+    // Only HTTP/2 is stored. HTTP/1.1 is the runtime default and stays out of the file.
+    if (brunoConfig.httpVersion === 2) {
+      if (!oc.extensions.bruno) {
+        oc.extensions.bruno = {};
+      }
+      (oc.extensions.bruno as any).httpVersion = 2;
+    }
+
     // bruno-specific extensions
     const openApiEntries = normalizeOpenApiSyncConfigs(brunoConfig.openapi);
     if (openApiEntries.length > 0) {

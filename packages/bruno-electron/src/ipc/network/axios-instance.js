@@ -19,6 +19,7 @@ const {
 } = require('@usebruno/requests');
 const { isSameOrigin, DEFAULT_MAX_REDIRECTS } = require('@usebruno/common').utils;
 const { applyOmitHeaders } = require('@usebruno/common');
+const { applyHttp2Transport } = require('@usebruno/common/http2');
 
 const LOCAL_IPV6 = '::1';
 const LOCAL_IPV4 = '127.0.0.1';
@@ -238,6 +239,8 @@ function makeAxiosInstance({
       });
     }
 
+    applyHttp2Transport(config);
+
     // Node keep-alive agents add Connection; strip it on the ClientRequest.
     if (omitConnection) {
       applyOmitConnectionToAxiosConfig(config);
@@ -279,7 +282,8 @@ function makeAxiosInstance({
         });
       });
 
-      const httpVersion = response?.request?.res?.httpVersion || response?.httpVersion;
+      const reportedVersion = response?.request?.res?.httpVersion || response?.httpVersion;
+      const httpVersion = reportedVersion || (config.httpVersion === 2 ? '2.0' : undefined);
       if (httpVersion?.startsWith('2')) {
         timeline.push({
           timestamp: new Date(),
@@ -344,7 +348,7 @@ function makeAxiosInstance({
           timeline.push({
             timestamp: new Date(),
             type: 'response',
-            message: `HTTP/${error.response.httpVersion || '1.1'} ${error.response.status} ${error.response.statusText}`
+            message: `HTTP/${error.response.httpVersion || (config.httpVersion === 2 ? '2.0' : '1.1')} ${error.response.status} ${error.response.statusText}`
           });
           Object.entries(error.response.headers).forEach(([key, value]) => {
             timeline.push({
@@ -541,7 +545,7 @@ function makeAxiosInstance({
           timeline.push({
             timestamp: new Date(),
             type: 'response',
-            message: `HTTP/${error.response.httpVersion || '1.1'} ${error.response.status} ${error.response.statusText}`
+            message: `HTTP/${error.response.httpVersion || (config.httpVersion === 2 ? '2.0' : '1.1')} ${error.response.status} ${error.response.statusText}`
           });
           Object.entries(error?.response?.headers || {}).forEach(([key, value]) => {
             timeline.push({

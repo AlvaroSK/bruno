@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import { updateSettingsSelectedTab } from 'providers/ReduxStore/slices/collections';
 import { useDispatch } from 'react-redux';
 import ProxySettings from './ProxySettings';
+import HttpSettings from './Http';
 import ClientCertSettings from './ClientCertSettings';
 import Headers from './Headers';
 import Auth from './Auth';
@@ -56,6 +57,9 @@ const CollectionSettings = ({ collection }) => {
     = (collection.draft?.root ? get(collection, 'draft.root.request.auth', {}) : get(collection, 'root.request.auth', {}))
       .mode || 'none';
 
+  const httpVersion = collection.draft?.brunoConfig
+    ? get(collection, 'draft.brunoConfig.httpVersion')
+    : get(collection, 'brunoConfig.httpVersion');
   const proxyConfig = collection.draft?.brunoConfig
     ? get(collection, 'draft.brunoConfig.proxy', {})
     : get(collection, 'brunoConfig.proxy', {});
@@ -91,6 +95,9 @@ const CollectionSettings = ({ collection }) => {
       }
       case 'presets': {
         return <Presets collection={collection} />;
+      }
+      case 'http': {
+        return <HttpSettings collection={collection} />;
       }
       case 'proxy': {
         return <ProxySettings collection={collection} />;
@@ -140,6 +147,10 @@ const CollectionSettings = ({ collection }) => {
           <div className={getTabClassname('presets')} role="tab" data-testid="collection-settings-tab-presets" onClick={() => setTab('presets')}>
             Presets
             {hasPresets && <StatusDot />}
+          </div>
+          <div className={getTabClassname('http')} role="tab" data-testid="collection-settings-tab-http" onClick={() => setTab('http')}>
+            HTTP
+            {httpVersion === 2 && <StatusDot />}
           </div>
           <div className={getTabClassname('proxy')} role="tab" data-testid="collection-settings-tab-proxy" onClick={() => setTab('proxy')}>
             Proxy

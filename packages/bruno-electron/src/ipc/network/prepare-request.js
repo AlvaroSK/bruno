@@ -549,6 +549,10 @@ const prepareRequest = async (item, collection = {}, abortController) => {
     return value !== undefined && value !== null && value !== false;
   });
 
+  if (collection?.brunoConfig?.httpVersion === 2) {
+    axiosRequest.httpVersion = 2;
+  }
+
   return axiosRequest;
 };
 

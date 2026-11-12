@@ -5,6 +5,7 @@ const { createFormData } = require('./form-data');
 const { setupProxyAgents } = require('./proxy-util');
 const { isSameOrigin, DEFAULT_MAX_REDIRECTS } = require('@usebruno/common').utils;
 const { applyOmitHeaders, shouldOmitConnection } = require('@usebruno/common');
+const { applyHttp2Transport } = require('@usebruno/common/http2');
 const {
   getSentHeaders,
   applyOmitConnectionToAxiosConfig,
@@ -134,6 +135,8 @@ function makeAxiosInstance({
         config.headers['cookie'] = cookieString;
       }
     }
+
+    applyHttp2Transport(config);
 
     startHop(config.metadata);
     return config;

@@ -2618,6 +2618,26 @@ export const collectionsSlice = createSlice({
         }
       }
     },
+    updateCollectionHttpVersion: (state, action) => {
+      const collection = findCollectionByUid(state.collections, action.payload.collectionUid);
+
+      if (collection) {
+        if (!collection.draft) {
+          collection.draft = {
+            root: cloneDeep(collection.root),
+            brunoConfig: cloneDeep(collection.brunoConfig)
+          };
+        }
+        if (!collection.draft.brunoConfig) {
+          collection.draft.brunoConfig = cloneDeep(collection.brunoConfig);
+        }
+        if (action.payload.httpVersion === 2) {
+          collection.draft.brunoConfig.httpVersion = 2;
+        } else {
+          delete collection.draft.brunoConfig.httpVersion;
+        }
+      }
+    },
     updateCollectionProtobuf: (state, action) => {
       const collection = findCollectionByUid(state.collections, action.payload.collectionUid);
 
@@ -4547,6 +4567,7 @@ export const {
   updateCollectionPresets,
   updateCollectionIcon,
   updateCollectionProtobuf,
+  updateCollectionHttpVersion,
   collectionAddFileEvent,
   collectionAddDirectoryEvent,
   collectionChangeFileEvent,

@@ -48,6 +48,24 @@ describe('stringifyCollection — typed request.variables', () => {
   });
 });
 
+describe('stringifyCollection — http version', () => {
+  const baseRoot = {
+    meta: null,
+    request: { headers: [], auth: { mode: 'none' }, script: { req: null, res: null }, tests: null, vars: { req: [], res: [] } },
+    docs: null
+  } as any;
+
+  it('round-trips HTTP/2 and omits the default', () => {
+    const yml = stringifyCollection(baseRoot, { name: 'c', httpVersion: 2 });
+    expect(yml).toMatch(/httpVersion:\s*2/);
+    expect(parseCollection(yml).brunoConfig.httpVersion).toBe(2);
+
+    const def = stringifyCollection(baseRoot, { name: 'c', httpVersion: 1 });
+    expect(def).not.toMatch(/httpVersion/);
+    expect(parseCollection(def).brunoConfig.httpVersion).toBeUndefined();
+  });
+});
+
 describe('stringifyCollection — script execution flow', () => {
   const baseRoot = {
     meta: null,
